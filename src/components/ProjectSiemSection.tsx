@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useI18n } from "@/context/I18nContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { projectSiemDetails } from "@/data/portfolioData";
-import { ShieldAlert, Server, Key, ShieldCheck, Eye, ExternalLink, Layers, CheckCircle2, X } from "lucide-react";
+import { ShieldAlert, Server, Key, ShieldCheck, Eye, ExternalLink, Layers, CheckCircle2, X, Lock } from "lucide-react";
 
 export const ProjectSiemSection: React.FC = () => {
   const { t } = useI18n();
@@ -42,9 +42,9 @@ export const ProjectSiemSection: React.FC = () => {
             {/* Project Specs & Text */}
             <div className="lg:col-span-6 flex flex-col gap-6">
               <div className="flex items-center gap-2 text-xs font-mono text-[#00F5D4] bg-[#00F5D4]/10 px-3 py-1 rounded-md w-fit border border-[#00F5D4]/30">
-                <span>FLAGSHIP PROJECT</span>
+                <span>REAL ENTERPRISE DEPLOYMENT</span>
                 <span>•</span>
-                <span>ENTERPRISE SIEM</span>
+                <span>SIEM & SOC HARDENED</span>
               </div>
 
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-mono leading-tight">
@@ -66,42 +66,52 @@ export const ProjectSiemSection: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-4 pt-2">
+              <div className="flex flex-wrap gap-3 pt-2">
                 <button
-                  onClick={() => setModalImage("/images/siem_architecture.png")}
-                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#00F5D4] text-[#050B14] font-mono text-xs font-bold hover:bg-[#00F5D4]/90 transition-all shadow-[0_0_20px_rgba(0,245,212,0.4)]"
+                  onClick={() => setModalImage("/images/ad_dmz_architecture.png")}
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[#00F5D4] text-[#050B14] font-mono text-xs font-bold hover:bg-[#00F5D4]/90 transition-all shadow-[0_0_20px_rgba(0,245,212,0.4)]"
                 >
                   <Layers className="w-4 h-4" />
                   <span>{t("view_architecture")}</span>
                 </button>
 
                 <button
-                  onClick={() => setModalImage("/images/siem_dashboard.png")}
-                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#0B132B] border border-[#00F5D4]/40 text-white font-mono text-xs font-semibold hover:border-[#00F5D4] transition-all"
+                  onClick={() => setModalImage("/images/wazuh_real_dashboard.png")}
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[#0B132B] border border-[#00F5D4]/40 text-white font-mono text-xs font-semibold hover:border-[#00F5D4] transition-all"
                 >
                   <Eye className="w-4 h-4 text-[#00F5D4]" />
                   <span>{t("live_demo_modal")}</span>
                 </button>
+
+                <button
+                  onClick={() => setModalImage("/images/pfsense_real_rules.png")}
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[#0B132B] border border-[#4895EF]/40 text-white font-mono text-xs font-semibold hover:border-[#4895EF] transition-all"
+                >
+                  <Lock className="w-4 h-4 text-[#4895EF]" />
+                  <span>{t("view_pfsense_modal")}</span>
+                </button>
               </div>
             </div>
 
-            {/* Architecture Preview Image Cards */}
+            {/* Architecture & Real Visuals Grid */}
             <div className="lg:col-span-6 flex flex-col gap-4">
-              {/* Image 1: SIEM Architecture */}
+              
+              {/* Image 1: Main Network Topology Diagram */}
               <div
-                onClick={() => setModalImage("/images/siem_architecture.png")}
-                className="relative h-56 sm:h-64 rounded-2xl overflow-hidden border border-[#00F5D4]/30 group cursor-pointer shadow-lg"
+                onClick={() => setModalImage("/images/ad_dmz_architecture.png")}
+                className="relative h-56 sm:h-60 rounded-2xl overflow-hidden border border-[#00F5D4]/40 group cursor-pointer shadow-xl"
               >
                 <Image
-                  src="/images/siem_architecture.png"
-                  alt="SIEM Wazuh Architecture Topology"
+                  src="/images/ad_dmz_architecture.png"
+                  alt="Enterprise Network & SIEM Architecture Topology"
                   fill
+                  unoptimized
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050B14] via-transparent to-transparent opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050B14] via-transparent to-transparent opacity-75" />
                 <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
-                  <span className="font-mono text-xs text-white font-bold bg-[#050B14]/80 px-2.5 py-1 rounded border border-white/10">
-                    Network Architecture Diagram
+                  <span className="font-mono text-xs text-white font-bold bg-[#050B14]/85 px-3 py-1 rounded border border-white/10">
+                    Network & Log Topology Diagram
                   </span>
                   <div className="w-8 h-8 rounded-full bg-[#00F5D4] text-[#050B14] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <ExternalLink className="w-4 h-4" />
@@ -109,27 +119,53 @@ export const ProjectSiemSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* Image 2: SIEM Dashboard */}
-              <div
-                onClick={() => setModalImage("/images/siem_dashboard.png")}
-                className="relative h-48 sm:h-52 rounded-2xl overflow-hidden border border-[#4895EF]/30 group cursor-pointer shadow-lg"
-              >
-                <Image
-                  src="/images/siem_dashboard.png"
-                  alt="SIEM Wazuh SOC Monitoring Dashboard"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050B14] via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
-                  <span className="font-mono text-xs text-white font-bold bg-[#050B14]/80 px-2.5 py-1 rounded border border-white/10">
-                    Live Security Incident Dashboard
-                  </span>
-                  <div className="w-8 h-8 rounded-full bg-[#4895EF] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <Eye className="w-4 h-4" />
+              {/* Grid 2 Images: Wazuh SIEM Dashboard & pfSense Firewall Rules */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                {/* Wazuh Dashboard Visual */}
+                <div
+                  onClick={() => setModalImage("/images/wazuh_real_dashboard.png")}
+                  className="relative h-44 rounded-2xl overflow-hidden border border-[#00F5D4]/30 group cursor-pointer shadow-lg"
+                >
+                  <Image
+                    src="/images/wazuh_real_dashboard.png"
+                    alt="Real Wazuh Kibana SIEM Interface"
+                    fill
+                    unoptimized
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050B14] via-transparent to-transparent opacity-80" />
+                  <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+                    <span className="font-mono text-[11px] text-white font-bold bg-[#050B14]/85 px-2 py-0.5 rounded">
+                      Wazuh Security Dashboard
+                    </span>
+                    <Eye className="w-4 h-4 text-[#00F5D4]" />
                   </div>
                 </div>
+
+                {/* pfSense Firewall Visual */}
+                <div
+                  onClick={() => setModalImage("/images/pfsense_real_rules.png")}
+                  className="relative h-44 rounded-2xl overflow-hidden border border-[#4895EF]/30 group cursor-pointer shadow-lg"
+                >
+                  <Image
+                    src="/images/pfsense_real_rules.png"
+                    alt="Real pfSense Firewall Traffic Rules"
+                    fill
+                    unoptimized
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050B14] via-transparent to-transparent opacity-80" />
+                  <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+                    <span className="font-mono text-[11px] text-white font-bold bg-[#050B14]/85 px-2 py-0.5 rounded">
+                      pfSense Firewall Rules & Snort
+                    </span>
+                    <Lock className="w-4 h-4 text-[#4895EF]" />
+                  </div>
+                </div>
+
               </div>
+
             </div>
 
           </div>
@@ -138,7 +174,7 @@ export const ProjectSiemSection: React.FC = () => {
           <div className="pt-8 border-t border-white/10">
             <h4 className="text-lg font-mono font-bold text-white mb-6 flex items-center gap-2">
               <Layers className="w-5 h-5 text-[#00F5D4]" />
-              <span>Integrated Systems & Telemetry Nodes</span>
+              <span>Integrated Telemetry Nodes & Security Layers</span>
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -187,8 +223,9 @@ export const ProjectSiemSection: React.FC = () => {
               <div className="relative w-full h-[75vh]">
                 <Image
                   src={modalImage}
-                  alt="Enlarged Visual"
+                  alt="Real Project Interface"
                   fill
+                  unoptimized
                   className="object-contain"
                 />
               </div>

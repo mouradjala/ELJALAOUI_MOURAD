@@ -2,12 +2,12 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useI18n } from "@/context/I18nContext";
-import { Terminal, Shield, Play, RotateCcw, AlertTriangle, CheckCircle, Info } from "lucide-react";
+import { Terminal, Shield, Play, RotateCcw, AlertTriangle, CheckCircle, Info, Flame, ShieldAlert, Cpu } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface LogEntry {
   id: string;
-  type: "input" | "output" | "error" | "alert";
+  type: "input" | "output" | "error" | "alert" | "attack";
   content: string;
   timestamp: string;
 }
@@ -15,11 +15,12 @@ interface LogEntry {
 export const SocTerminal: React.FC = () => {
   const { t } = useI18n();
   const [inputVal, setInputVal] = useState("");
+  const [isSimulating, setIsSimulating] = useState(false);
   const [logs, setLogs] = useState<LogEntry[]>([
     {
       id: "1",
       type: "output",
-      content: "SOC Sentinel OS v3.4.1 [Wazuh Engine 4.8.0]",
+      content: "SOC Sentinel OS v3.4.1 [Wazuh SIEM Engine 4.8.0]",
       timestamp: "12:00:00 AM",
     },
     {
@@ -31,7 +32,7 @@ export const SocTerminal: React.FC = () => {
     {
       id: "3",
       type: "alert",
-      content: "System Initialized. Type 'help' or click shortcut buttons below.",
+      content: "System Initialized. Type 'simulate-attack', 'mitre', or click shortcuts below.",
       timestamp: "12:00:02 AM",
     },
   ]);
@@ -42,9 +43,59 @@ export const SocTerminal: React.FC = () => {
     terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
 
+  const runAttackSimulation = () => {
+    setIsSimulating(true);
+    const time = new Date().toLocaleTimeString();
+
+    setLogs((prev) => [
+      ...prev,
+      { id: Math.random().toString(), type: "input", content: `root@soc-terminal:~# simulate-attack`, timestamp: time },
+      { id: Math.random().toString(), type: "alert", content: `[⚡ SIMULATION STARTED] Live Multi-Stage Cyber Attack Simulation Executing...`, timestamp: time },
+    ]);
+
+    setTimeout(() => {
+      setLogs((prev) => [
+        ...prev,
+        { id: Math.random().toString(), type: "attack", content: `[STAGE 1 - RECONNAISSANCE] External IP 198.51.100.42 initiating SYN port scan on DMZ (10.0.5.20)...`, timestamp: new Date().toLocaleTimeString() },
+      ]);
+    }, 800);
+
+    setTimeout(() => {
+      setLogs((prev) => [
+        ...prev,
+        { id: Math.random().toString(), type: "attack", content: `[STAGE 2 - EXPLOITATION] 1,450 SSH brute-force attempts detected against root@10.0.5.20:22`, timestamp: new Date().toLocaleTimeString() },
+        { id: Math.random().toString(), type: "alert", content: `[🔥 CRITICAL ALERT - LEVEL 12] Wazuh Rule 5716: High-frequency authentication failure threshold exceeded!`, timestamp: new Date().toLocaleTimeString() },
+      ]);
+    }, 1800);
+
+    setTimeout(() => {
+      setLogs((prev) => [
+        ...prev,
+        { id: Math.random().toString(), type: "attack", content: `[STAGE 3 - LATERAL MOVEMENT] Active Directory Kerberoasting attempt targeting ServiceAccount 'svc_sql' [T1558.003]`, timestamp: new Date().toLocaleTimeString() },
+      ]);
+    }, 2800);
+
+    setTimeout(() => {
+      setLogs((prev) => [
+        ...prev,
+        { id: Math.random().toString(), type: "output", content: `[🛡️ ACTIVE RESPONSE TRIGGERED] Wazuh Active-Response executing pfSense API script...`, timestamp: new Date().toLocaleTimeString() },
+        { id: Math.random().toString(), type: "output", content: `[+] pfSense Firewall: IP 198.51.100.42 added to WAN Blocked Aliases table (pfblockerng).`, timestamp: new Date().toLocaleTimeString() },
+        { id: Math.random().toString(), type: "output", content: `[+] Active Directory: Kerberos ticket for 'svc_sql' revoked & account password force-reset.`, timestamp: new Date().toLocaleTimeString() },
+        { id: Math.random().toString(), type: "alert", content: `[✅ INCIDENT CONTAINED] Attack mitigated in 3.4 seconds. Incident Log ID #INC-9402 archived in OpenSearch.`, timestamp: new Date().toLocaleTimeString() },
+      ]);
+      setIsSimulating(false);
+    }, 3800);
+  };
+
   const handleCommandSubmit = (cmdString?: string) => {
     const rawCmd = (cmdString || inputVal).trim().toLowerCase();
     if (!rawCmd) return;
+
+    if (rawCmd === "simulate-attack" || rawCmd === "attack") {
+      runAttackSimulation();
+      setInputVal("");
+      return;
+    }
 
     const time = new Date().toLocaleTimeString();
     const newLogs: LogEntry[] = [
@@ -57,13 +108,43 @@ export const SocTerminal: React.FC = () => {
         newLogs.push({
           id: Math.random().toString(),
           type: "output",
-          content: `Available SOC Commands:
-  • status   : Check Wazuh Manager & Agent Connectivity
-  • scan     : Perform Network Vulnerability & Port Scan
-  • logs     : Retrieve Recent SIEM Security Event Logs
-  • wazuh    : Inspect Active Directory & pfSense Rules
-  • pfsense  : Check Firewall Active Sessions & Tunnels
-  • clear    : Clear Terminal Display`,
+          content: `Available SOC Cyber Commands:
+  • simulate-attack : Execute a Live Multi-Stage Cyber Attack & Automated SOC Mitigation
+  • mitre           : Display MITRE ATT&CK Threat Mapping Matrix
+  • playbook        : View Automated Incident Response Playbook Execution
+  • status          : Check Wazuh Manager & Agent Connectivity
+  • scan            : Perform Network Vulnerability & Port Scan
+  • logs            : Retrieve Recent SIEM Security Event Logs
+  • wazuh           : Inspect Active Directory & pfSense Rules
+  • pfsense         : Check Firewall Active Sessions & Tunnels
+  • clear           : Clear Terminal Display`,
+          timestamp: time,
+        });
+        break;
+
+      case "mitre":
+        newLogs.push({
+          id: Math.random().toString(),
+          type: "output",
+          content: `=== MITRE ATT&CK Matrix Threat Mapping ===
+[Tactic: Initial Access]  -> T1190 Exploit Public-Facing Application (pfSense Filtered)
+[Tactic: Credential Access] -> T1110.001 Brute Force (SSH Wazuh Active Response Block)
+[Tactic: Credential Access] -> T1558.003 Kerberoasting (AD GPO Security Hardened)
+[Tactic: Defense Evasion]   -> T1070 Indicator Removal (Syslog Immutable Remote Audit Log)`,
+          timestamp: time,
+        });
+        break;
+
+      case "playbook":
+        newLogs.push({
+          id: Math.random().toString(),
+          type: "output",
+          content: `=== SOC Incident Response Playbook (IR-PB-402) ===
+Step 1: Triage Alert -> Classify severity via Wazuh rule engine
+Step 2: Containment -> Isolate host & push IP drop rule to pfSense WAN
+Step 3: Eradication -> Kill malicious process, revoke Kerberos tickets
+Step 4: Recovery    -> Verify service integrity (FIM) & restore baseline
+Step 5: Post-Mortem -> Export forensic artifact report to OpenSearch Indexer`,
           timestamp: time,
         });
         break;
@@ -151,7 +232,7 @@ Active IPSec/OpenVPN Tunnels: 2 Active Tunnels (AES-256-GCM)`,
         newLogs.push({
           id: Math.random().toString(),
           type: "error",
-          content: `Command not recognized: '${rawCmd}'. Type 'help' for available commands.`,
+          content: `Command not recognized: '${rawCmd}'. Type 'help' or 'simulate-attack' for available options.`,
           timestamp: time,
         });
         break;
@@ -181,7 +262,7 @@ Active IPSec/OpenVPN Tunnels: 2 Active Tunnels (AES-256-GCM)`,
         <div className="glass-panel rounded-2xl overflow-hidden border border-[#00F5D4]/40 shadow-2xl bg-[#050B14]/95">
           
           {/* Top Bar Controls */}
-          <div className="bg-[#0B132B] px-4 py-3 border-b border-white/10 flex items-center justify-between">
+          <div className="bg-[#0B132B] px-4 py-3 border-b border-white/10 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-red-500/80 inline-block" />
               <span className="w-3 h-3 rounded-full bg-yellow-500/80 inline-block" />
@@ -191,17 +272,28 @@ Active IPSec/OpenVPN Tunnels: 2 Active Tunnels (AES-256-GCM)`,
               </span>
             </div>
 
-            <button
-              onClick={() => handleCommandSubmit("clear")}
-              className="text-xs font-mono text-slate-400 hover:text-[#00F5D4] flex items-center gap-1 transition-colors"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span>Clear</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={runAttackSimulation}
+                disabled={isSimulating}
+                className="px-3 py-1 rounded bg-gradient-to-r from-red-600 to-amber-600 text-white font-mono text-xs font-bold hover:opacity-90 flex items-center gap-1 shadow-[0_0_12px_rgba(239,68,68,0.5)] disabled:opacity-50"
+              >
+                <Flame className="w-3.5 h-3.5" />
+                <span>Simulate Attack</span>
+              </button>
+
+              <button
+                onClick={() => handleCommandSubmit("clear")}
+                className="text-xs font-mono text-slate-400 hover:text-[#00F5D4] flex items-center gap-1 transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Clear</span>
+              </button>
+            </div>
           </div>
 
           {/* Log Output Area */}
-          <div className="p-6 font-mono text-xs sm:text-sm h-80 overflow-y-auto flex flex-col gap-2 leading-relaxed">
+          <div className="p-6 font-mono text-xs sm:text-sm h-96 overflow-y-auto flex flex-col gap-2 leading-relaxed">
             {logs.map((log) => (
               <div key={log.id} className="flex items-start gap-2">
                 <span className="text-slate-500 select-none">[{log.timestamp}]</span>
@@ -214,6 +306,9 @@ Active IPSec/OpenVPN Tunnels: 2 Active Tunnels (AES-256-GCM)`,
                 {log.type === "alert" && (
                   <span className="text-yellow-400 font-semibold">{log.content}</span>
                 )}
+                {log.type === "attack" && (
+                  <span className="text-red-400 font-semibold">{log.content}</span>
+                )}
                 {log.type === "error" && (
                   <span className="text-red-400">{log.content}</span>
                 )}
@@ -223,17 +318,26 @@ Active IPSec/OpenVPN Tunnels: 2 Active Tunnels (AES-256-GCM)`,
           </div>
 
           {/* Quick Command Buttons Bar */}
-          <div className="px-6 py-2 bg-[#0B132B]/50 border-t border-white/5 flex flex-wrap gap-2">
+          <div className="px-6 py-2 bg-[#0B132B]/50 border-t border-white/5 flex flex-wrap gap-2 items-center">
             <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1 mr-2">
               <Info className="w-3 h-3 text-[#00F5D4]" /> Shortcuts:
             </span>
-            {["status", "scan", "logs", "wazuh", "pfsense", "help"].map((cmd) => (
+            {[
+              { cmd: "simulate-attack", label: "⚡ Attack Sim" },
+              { cmd: "mitre", label: "🎯 MITRE Matrix" },
+              { cmd: "playbook", label: "📋 IR Playbook" },
+              { cmd: "status", label: "Status" },
+              { cmd: "scan", label: "Nmap Scan" },
+              { cmd: "logs", label: "SIEM Logs" },
+              { cmd: "wazuh", label: "Wazuh Rules" },
+              { cmd: "pfsense", label: "pfSense GW" },
+            ].map((btn) => (
               <button
-                key={cmd}
-                onClick={() => handleCommandSubmit(cmd)}
+                key={btn.cmd}
+                onClick={() => handleCommandSubmit(btn.cmd)}
                 className="px-2.5 py-1 rounded bg-[#0B132B] border border-[#00F5D4]/30 text-[11px] font-mono text-[#00F5D4] hover:bg-[#00F5D4] hover:text-[#050B14] transition-all"
               >
-                ${cmd}
+                {btn.label}
               </button>
             ))}
           </div>
@@ -258,7 +362,8 @@ Active IPSec/OpenVPN Tunnels: 2 Active Tunnels (AES-256-GCM)`,
             />
             <button
               type="submit"
-              className="px-4 py-1.5 rounded-lg bg-[#00F5D4] text-[#050B14] font-mono text-xs font-bold hover:bg-[#00F5D4]/90 transition-colors flex items-center gap-1"
+              disabled={isSimulating}
+              className="px-4 py-1.5 rounded-lg bg-[#00F5D4] text-[#050B14] font-mono text-xs font-bold hover:bg-[#00F5D4]/90 transition-colors flex items-center gap-1 disabled:opacity-50"
             >
               <Play className="w-3 h-3" />
               <span>EXEC</span>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useI18n, Language } from "@/context/I18nContext";
-import { Shield, Globe, Menu, X, Download, Terminal, ChevronDown } from "lucide-react";
+import { Shield, Globe, Menu, X, Download, Terminal, ChevronDown, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const languages: { code: Language; label: string; flag: string }[] = [
@@ -13,7 +13,7 @@ const languages: { code: Language; label: string; flag: string }[] = [
 ];
 
 export const Navbar: React.FC = () => {
-  const { language, setLanguage, t } = useI18n();
+  const { language, setLanguage, t, theme, toggleTheme } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,18 +37,11 @@ export const Navbar: React.FC = () => {
 
   const currentLangObj = languages.find((l) => l.code === language) || languages[0];
 
-  const handleCvDownload = () => {
-    // Generate/Trigger CV download simulation or link
-    const link = document.createElement("a");
-    link.href = "#contact";
-    link.click();
-  };
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#050B14]/85 backdrop-blur-md border-b border-[#00F5D4]/20 py-3 shadow-lg shadow-[#00F5D4]/5"
+          ? "bg-[#050B14]/90 backdrop-blur-md border-b border-[#00F5D4]/20 py-3 shadow-lg shadow-[#00F5D4]/5"
           : "bg-transparent py-5"
       }`}
     >
@@ -82,8 +75,18 @@ export const Navbar: React.FC = () => {
           ))}
         </nav>
 
-        {/* Actions (Language Switcher & CV Button) */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* Actions (Language Switcher, Dark/Light Mode, CV Button) */}
+        <div className="hidden md:flex items-center gap-3">
+          
+          {/* Dark / Light Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg bg-[#0B132B]/80 border border-[#00F5D4]/20 hover:border-[#00F5D4]/60 text-[#00F5D4] transition-all"
+            title="Toggle Dark/Light Cyber Theme"
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-[#00F5D4]" />}
+          </button>
+
           {/* Language Selector */}
           <div className="relative">
             <button
@@ -131,7 +134,6 @@ export const Navbar: React.FC = () => {
           {/* Download CV CTA */}
           <a
             href="#contact"
-            onClick={handleCvDownload}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#00F5D4] text-[#050B14] font-mono text-xs font-bold hover:bg-[#00F5D4]/90 transition-all shadow-[0_0_20px_rgba(0,245,212,0.4)] hover:shadow-[0_0_25px_rgba(0,245,212,0.6)]"
           >
             <Download className="w-3.5 h-3.5" />
@@ -140,8 +142,14 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Mobile Hamburger Toggle */}
-        <div className="flex md:hidden items-center gap-3">
-          {/* Mobile Language Button */}
+        <div className="flex md:hidden items-center gap-2">
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded bg-[#0B132B] border border-[#00F5D4]/30 text-white"
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-[#00F5D4]" />}
+          </button>
+
           <button
             onClick={() => setLangDropdownOpen(!langDropdownOpen)}
             className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#0B132B] border border-[#00F5D4]/30 text-xs text-white"
