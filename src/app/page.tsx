@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { I18nProvider } from "@/context/I18nContext";
 import { CyberParticlesBackground } from "@/components/CyberParticlesBackground";
 import { Navbar } from "@/components/Navbar";
@@ -14,6 +14,14 @@ import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 
 export default function Home() {
+  useEffect(() => {
+    // Reset scroll position to top on initial page load / refresh
+    if (typeof window !== "undefined") {
+      window.history.scrollRestoration = "manual";
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
   return (
     <I18nProvider>
       <div className="relative min-h-screen bg-[#050B14] text-white selection:bg-[#00F5D4] selection:text-[#050B14]">
