@@ -47,6 +47,9 @@ export const translations: Record<Language, Record<string, string>> = {
     about_degree2_title: "Technicien Spécialisé en Réseaux",
     about_degree2_sub: "Infrastructures & Systèmes IT",
     about_degree2_date: "2021",
+    about_degree3_title: "Baccalauréat Scientifique",
+    about_degree3_sub: "Option Sciences Physiques",
+    about_degree3_date: "2016",
 
     // Skills
     skills_title: "Compétences Techniques",
@@ -155,6 +158,9 @@ export const translations: Record<Language, Record<string, string>> = {
     about_degree2_title: "Specialized Technician in Networks",
     about_degree2_sub: "IT Infrastructure & Systems",
     about_degree2_date: "2021",
+    about_degree3_title: "Scientific Baccalaureate",
+    about_degree3_sub: "Physical Sciences Major",
+    about_degree3_date: "2016",
 
     // Skills
     skills_title: "Technical Skills",

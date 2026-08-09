@@ -309,7 +309,8 @@ def build_advanced_pdf():
 
     edus = [
         [Paragraph("<b>Diplôme d'Ingénieur en Informatique</b> (Réseaux & Cybersécurité)", job_title), Paragraph("2026", job_meta)],
-        [Paragraph("<b>Technicien Spécialisé en Réseaux Informatiques</b>", job_title), Paragraph("2021", job_meta)]
+        [Paragraph("<b>Technicien Spécialisé en Réseaux Informatiques</b>", job_title), Paragraph("2021", job_meta)],
+        [Paragraph("<b>Baccalauréat Scientifique</b> (Option Sciences Physiques)", job_title), Paragraph("2016", job_meta)]
     ]
     t_edu = Table(edus, colWidths=[280, 80])
     t_edu.setStyle(TableStyle([

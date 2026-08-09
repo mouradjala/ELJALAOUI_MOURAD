@@ -161,15 +161,22 @@ export const educationData: EducationItem[] = [
     id: "eng_degree",
     degreeKey: "about_degree1_title",
     subKey: "about_degree1_sub",
-    institution: "Engineering School",
+    institution: "École d'Ingénieurs",
     period: "2026",
   },
   {
     id: "spec_tech",
     degreeKey: "about_degree2_title",
     subKey: "about_degree2_sub",
-    institution: "OFPPT / Specialized Institute",
+    institution: "Institut Spécialisé de Technologie Appliquée",
     period: "2021",
+  },
+  {
+    id: "bac_physique",
+    degreeKey: "about_degree3_title",
+    subKey: "about_degree3_sub",
+    institution: "Enseignement Secondaire Qualifiant",
+    period: "2016",
   },
 ];
 
