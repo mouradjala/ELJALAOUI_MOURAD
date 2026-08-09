@@ -110,8 +110,18 @@ export const HeroSection: React.FC = () => {
               </a>
 
               <a
+                href="/CV_ELJALAOUI_MOURAD.pdf"
+                target="_blank"
+                download="CV_ELJALAOUI_MOURAD.pdf"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#0B132B] border border-[#00F5D4]/40 text-[#00F5D4] font-mono text-sm font-semibold hover:bg-[#00F5D4] hover:text-[#050B14] transition-all shadow-[0_0_15px_rgba(0,245,212,0.2)]"
+              >
+                <Download className="w-4 h-4" />
+                <span>{t("hero_btn_cv")}</span>
+              </a>
+
+              <a
                 href="#contact"
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#0B132B] border border-[#00F5D4]/40 text-white font-mono text-sm font-semibold hover:border-[#00F5D4] hover:bg-[#1C2541] transition-all"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#0B132B] border border-white/20 text-white font-mono text-sm font-semibold hover:border-[#00F5D4] hover:bg-[#1C2541] transition-all"
               >
                 <span>{t("hero_btn_contact")}</span>
               </a>
