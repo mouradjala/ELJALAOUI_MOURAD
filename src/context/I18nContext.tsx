@@ -33,6 +33,11 @@ export const translations: Record<Language, Record<string, string>> = {
     // About
     about_title: "À Propos de Moi",
     about_subtitle: "Expertise & Passion pour la Sécurité des Infrastructures IT",
+    about_bio_l1: "🛡️ Jeune ingénieur spécialisé en réseaux informatiques, systèmes et cybersécurité.",
+    about_bio_l2: "⚡ Expert dans la protection et la supervision continue des infrastructures IT critiques.",
+    about_bio_l3: "🔒 Concepteur d'une solution SIEM d'entreprise basée sur Wazuh, pfSense et Active Directory.",
+    about_bio_l4: "👁️ Spécialiste de la détection proactive d'incidents, du filtrage DMZ et du durcissement système.",
+    about_bio_l5: "🚀 Passionné par l'innovation cyber, les architectures Zero-Trust et la haute disponibilité.",
     about_bio1: "Je suis un jeune ingénieur passionné par les réseaux, la gestion des systèmes et la cybersécurité. Mon objectif principal est de protéger les infrastructures critiques contre les cybermenaces émergentes grâce à des technologies de surveillance proactives et des architectures Zero-Trust.",
     about_bio2: "J'ai conçu et mis en œuvre une infrastructure SOC/SIEM complète basée sur Wazuh, intégrant pfSense, Active Directory, ainsi que des serveurs Linux (DMZ) et Windows, permettant la centralisation des logs et la détection d'incidents en temps réel.",
     about_education_title: "Formation & Diplômes",
@@ -136,6 +141,11 @@ export const translations: Record<Language, Record<string, string>> = {
     // About
     about_title: "About Me",
     about_subtitle: "Expertise & Passion for IT Infrastructure & Security",
+    about_bio_l1: "🛡️ Young engineer specialized in computer networks, systems, and cybersecurity.",
+    about_bio_l2: "⚡ Expert in safeguarding and continuously monitoring critical IT infrastructures.",
+    about_bio_l3: "🔒 Architect of an enterprise SIEM solution built on Wazuh, pfSense, and Active Directory.",
+    about_bio_l4: "👁️ Specialist in proactive threat detection, DMZ filtering, and system hardening.",
+    about_bio_l5: "🚀 Passionate about cyber innovation, Zero-Trust architectures, and high availability.",
     about_bio1: "I am a driven engineer specializing in networking, system administration, and cybersecurity. My main goal is safeguarding critical infrastructure against cyber threats using proactive monitoring technologies and zero-trust architectures.",
     about_bio2: "I built and deployed a complete SOC/SIEM infrastructure using Wazuh, integrating pfSense firewalls, Active Directory, Linux DMZ servers, and Windows endpoints to centralize logs and trigger real-time incident detection.",
     about_education_title: "Education & Degrees",

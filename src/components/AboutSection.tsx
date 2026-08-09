@@ -64,13 +64,24 @@ export const AboutSection: React.FC = () => {
                 </div>
               </div>
 
-              <p className="text-slate-300 text-base leading-relaxed">
-                {t("about_bio1")}
-              </p>
-
-              <p className="text-slate-300 text-base leading-relaxed">
-                {t("about_bio2")}
-              </p>
+              <div className="flex flex-col gap-3 font-sans text-[#F8FAFC]">
+                {[
+                  t("about_bio_l1"),
+                  t("about_bio_l2"),
+                  t("about_bio_l3"),
+                  t("about_bio_l4"),
+                  t("about_bio_l5"),
+                ].map((line, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-[#0B132B]/80 border border-[#00F5D4]/20 hover:border-[#00F5D4]/50 transition-all flex items-start gap-3 shadow-md"
+                  >
+                    <span className="text-sm sm:text-base leading-relaxed text-slate-200 font-medium">
+                      {line}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Core Cyber Pillars */}
