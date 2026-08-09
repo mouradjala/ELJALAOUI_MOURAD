@@ -1,182 +1,262 @@
 import os
+from PIL import Image, ImageDraw, ImageOps
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable, Image as RLImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT, TA_JUSTIFY
 
-def build_pdf():
+def prepare_profile_photo():
+    src_path = os.path.join("public", "images", "profile.png")
+    dst_path = os.path.join("public", "images", "profile_cv_circle.png")
+    if os.path.exists(src_path):
+        img = Image.open(src_path).convert('RGBA')
+        size = (300, 300)
+        img = ImageOps.fit(img, size, Image.Resampling.LANCZOS)
+        
+        mask = Image.new('L', size, 0)
+        draw = ImageDraw.Draw(mask)
+        draw.ellipse((0, 0) + size, fill=255)
+        
+        output = Image.new('RGBA', size, (0, 0, 0, 0))
+        output.paste(img, (0, 0), mask=mask)
+        
+        draw_out = ImageDraw.Draw(output)
+        draw_out.ellipse((2, 2, size[0]-2, size[1]-2), outline='#00B4D8', width=6)
+        output.save(dst_path)
+    return dst_path
+
+def build_advanced_pdf():
+    photo_path = prepare_profile_photo()
     pdf_path = os.path.join("public", "CV_ELJALAOUI_MOURAD.pdf")
+    
     doc = SimpleDocTemplate(
         pdf_path,
         pagesize=letter,
-        rightMargin=36,
-        leftMargin=36,
-        topMargin=36,
-        bottomMargin=36
+        rightMargin=24,
+        leftMargin=24,
+        topMargin=24,
+        bottomMargin=24
     )
 
     styles = getSampleStyleSheet()
 
     # Color Palette
-    primary_color = colors.HexColor("#0B132B")   # Dark Navy
-    accent_color = colors.HexColor("#00B4D8")    # Cyber Teal
-    subtext_color = colors.HexColor("#475569")   # Slate
-    body_color = colors.HexColor("#1E293B")      # Dark Text
+    navy_dark = colors.HexColor("#0B132B")      # Main Headers & Primary Navy
+    teal_accent = colors.HexColor("#00B4D8")    # Accent Teal
+    teal_dark = colors.HexColor("#0077B6")      # Sub-headers
+    text_dark = colors.HexColor("#1E293B")      # Text Body
+    text_muted = colors.HexColor("#475569")     # Subtext
+    bg_sidebar = colors.HexColor("#F8FAFC")     # Light Slate Background for Sidebar
+    bg_card = colors.HexColor("#F1F5F9")        # Card background
 
-    # Custom Typography Styles
-    title_style = ParagraphStyle(
-        'DocTitle',
+    # Typography Styles
+    title_name = ParagraphStyle(
+        'NameTitle',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=22,
-        leading=26,
-        textColor=primary_color,
-        alignment=TA_CENTER
+        fontSize=20,
+        leading=24,
+        textColor=navy_dark
     )
 
-    subtitle_style = ParagraphStyle(
-        'DocSubTitle',
+    subtitle_role = ParagraphStyle(
+        'RoleSubtitle',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=12,
-        leading=16,
-        textColor=accent_color,
-        alignment=TA_CENTER
+        fontSize=11,
+        leading=15,
+        textColor=teal_dark
     )
 
-    contact_style = ParagraphStyle(
-        'ContactText',
-        parent=styles['Normal'],
-        fontName='Helvetica',
-        fontSize=9,
-        leading=13,
-        textColor=subtext_color,
-        alignment=TA_CENTER
-    )
-
-    section_heading = ParagraphStyle(
-        'SectionHeading',
+    sidebar_heading = ParagraphStyle(
+        'SidebarHeading',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=12,
-        leading=16,
-        textColor=primary_color,
-        spaceBefore=10,
+        fontSize=10.5,
+        leading=14,
+        textColor=navy_dark,
+        spaceBefore=8,
         spaceAfter=4
     )
 
-    body_style = ParagraphStyle(
+    sidebar_text = ParagraphStyle(
+        'SidebarText',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=8.5,
+        leading=12,
+        textColor=text_dark
+    )
+
+    sidebar_label = ParagraphStyle(
+        'SidebarLabel',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=8.5,
+        leading=12,
+        textColor=navy_dark
+    )
+
+    main_heading = ParagraphStyle(
+        'MainHeading',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=11.5,
+        leading=15,
+        textColor=navy_dark,
+        spaceBefore=6,
+        spaceAfter=3
+    )
+
+    body_text = ParagraphStyle(
         'BodyTextCustom',
         parent=styles['Normal'],
         fontName='Helvetica',
-        fontSize=9.5,
-        leading=14,
-        textColor=body_color,
+        fontSize=8.8,
+        leading=13,
+        textColor=text_dark,
         alignment=TA_JUSTIFY
     )
 
-    bullet_style = ParagraphStyle(
-        'BulletCustom',
+    bullet_text = ParagraphStyle(
+        'BulletText',
         parent=styles['Normal'],
         fontName='Helvetica',
-        fontSize=9,
-        leading=13,
-        textColor=body_color,
-        leftIndent=12
+        fontSize=8.5,
+        leading=12,
+        textColor=text_dark,
+        leftIndent=8
     )
 
-    job_title_style = ParagraphStyle(
+    job_title = ParagraphStyle(
         'JobTitle',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=10,
-        leading=14,
-        textColor=primary_color
+        fontSize=9.5,
+        leading=13,
+        textColor=navy_dark
     )
 
-    job_meta_style = ParagraphStyle(
+    job_meta = ParagraphStyle(
         'JobMeta',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=9,
-        leading=13,
-        textColor=accent_color,
+        fontSize=8.5,
+        leading=12,
+        textColor=teal_dark,
         alignment=TA_RIGHT
     )
 
-    story = []
+    # -------------------------------------------------------------
+    # LEFT SIDEBAR CONTENT
+    # -------------------------------------------------------------
+    sidebar_flowables = []
 
-    # 1. Header Section
-    story.append(Paragraph("ELJALAOUI MOURAD", title_style))
-    story.append(Spacer(1, 4))
-    story.append(Paragraph("INGÉNIEUR RÉSEAUX & CYBERSÉCURITÉ | ARCHITECTE SIEM WAZUH", subtitle_style))
-    story.append(Spacer(1, 6))
+    # 1. Profile Photo
+    if os.path.exists(photo_path):
+        rl_img = RLImage(photo_path, width=88, height=88)
+        sidebar_flowables.append(rl_img)
+        sidebar_flowables.append(Spacer(1, 8))
+
+    # 2. Contact Info
+    sidebar_flowables.append(Paragraph("<b>CONTACT</b>", sidebar_heading))
+    sidebar_flowables.append(HRFlowable(width="100%", thickness=1, color=teal_accent, spaceBefore=1, spaceAfter=4))
     
-    contact_text = "<b>Localisation:</b> Agadir, Maroc &nbsp;|&nbsp; <b>Tél:</b> +212 622-823460 &nbsp;|&nbsp; <b>Email:</b> mouradjala4@gmail.com &nbsp;|&nbsp; <b>LinkedIn:</b> linkedin.com/in/eljalaoui-mourad"
-    story.append(Paragraph(contact_text, contact_style))
-    story.append(Spacer(1, 8))
-    story.append(HRFlowable(width="100%", thickness=1.5, color=accent_color, spaceBefore=2, spaceAfter=8))
+    contacts = [
+        ("• Localisation :", "Agadir, Maroc"),
+        ("• Téléphone :", "+212 622-823460"),
+        ("• Email :", "mouradjala4@gmail.com"),
+        ("• LinkedIn :", "linkedin.com/in/mourad")
+    ]
+    for lbl, val in contacts:
+        sidebar_flowables.append(Paragraph(f"<b>{lbl}</b> {val}", sidebar_text))
+        sidebar_flowables.append(Spacer(1, 2))
 
-    # 2. Profil Professionnel
-    story.append(Paragraph("PROFIL PROFESSIONNEL", section_heading))
-    summary_p = Paragraph(
-        "Ingénieur spécialisé en réseaux informatiques, systèmes et cybersécurité. Concepteur et intégrateur d'une solution <b>SIEM d'entreprise basée sur Wazuh</b>, centralisant les journaux d'Active Directory, du pare-feu pfSense, de serveurs Linux (DMZ) et d'hôtes Windows pour la détection proactive des menaces, la réponse aux incidents et le durcissement d'infrastructures IT.",
-        body_style
-    )
-    story.append(summary_p)
-    story.append(Spacer(1, 6))
+    sidebar_flowables.append(Spacer(1, 6))
 
-    # 3. Compétences Techniques
-    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E2E8F0"), spaceBefore=4, spaceAfter=6))
-    story.append(Paragraph("COMPÉTENCES TECHNIQUES", section_heading))
-    
-    skills_data = [
-        [
-            Paragraph("<b>Cybersécurité & SIEM:</b>", body_style),
-            Paragraph("Wazuh SIEM, Centralisation de Logs (Syslog/WinEvent), IDS/IPS (Snort), Détection d'incidents, Audit Active Directory.", body_style)
-        ],
-        [
-            Paragraph("<b>Réseaux & Sécurité:</b>", body_style),
-            Paragraph("pfSense Firewall, Tunnels VPN (IPsec/OpenVPN), Routers & Switches Cisco, Segmentation VLAN, DMZ, Wireshark, Nmap.", body_style)
-        ],
-        [
-            Paragraph("<b>Systèmes & Admin:</b>", body_style),
-            Paragraph("Active Directory (GPO, DNS, Kerberos), Windows Server, Linux (Ubuntu/Debian), Maintenance Informatique, Supervision IT.", body_style)
-        ]
+    # 3. Compétences Techniques (Pillars)
+    sidebar_flowables.append(Paragraph("<b>COMPÉTENCES</b>", sidebar_heading))
+    sidebar_flowables.append(HRFlowable(width="100%", thickness=1, color=teal_accent, spaceBefore=1, spaceAfter=4))
+
+    skills_categories = [
+        ("Cybersécurité & SIEM", [
+            "• Wazuh SIEM (Rule Engine)",
+            "• Centralisation Logs (Syslog)",
+            "• IDS/IPS (Snort / Suricata)",
+            "• Active Response & Alerting",
+            "• Audit Active Directory"
+        ]),
+        ("Réseaux & Sécurité", [
+            "• pfSense Firewall & DMZ",
+            "• Tunnels VPN (IPsec/OpenVPN)",
+            "• Cisco Routers & Switches",
+            "• Segmentation VLANs & ACLs",
+            "• Wireshark & Nmap"
+        ]),
+        ("Systèmes & Monitoring", [
+            "• Active Directory (GPO, DNS)",
+            "• Windows Server & Linux",
+            "• OpenSearch / Kibana",
+            "• Supervision & MCO"
+        ])
     ]
 
-    t_skills = Table(skills_data, colWidths=[130, 410])
-    t_skills.setStyle(TableStyle([
-        ('VALIGN', (0,0), (-1,-1), 'TOP'),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 2),
-        ('TOPPADDING', (0,0), (-1,-1), 2),
-        ('LEFTPADDING', (0,0), (-1,-1), 0),
-        ('RIGHTPADDING', (0,0), (-1,-1), 0),
-    ]))
-    story.append(t_skills)
-    story.append(Spacer(1, 6))
+    for cat, items in skills_categories:
+        sidebar_flowables.append(Paragraph(f"<b>{cat}</b>", sidebar_label))
+        for it in items:
+            sidebar_flowables.append(Paragraph(it, sidebar_text))
+        sidebar_flowables.append(Spacer(1, 4))
 
-    # 4. Expérience Professionnelle
-    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E2E8F0"), spaceBefore=4, spaceAfter=6))
-    story.append(Paragraph("EXPÉRIENCE PROFESSIONNELLE", section_heading))
+    # 4. Langues
+    sidebar_flowables.append(Paragraph("<b>LANGUES</b>", sidebar_heading))
+    sidebar_flowables.append(HRFlowable(width="100%", thickness=1, color=teal_accent, spaceBefore=1, spaceAfter=4))
+    sidebar_flowables.append(Paragraph("• <b>Français :</b> Courant", sidebar_text))
+    sidebar_flowables.append(Paragraph("• <b>Anglais :</b> Technique", sidebar_text))
+    sidebar_flowables.append(Paragraph("• <b>Arabe :</b> Maternelle", sidebar_text))
 
-    exps = [
+
+    # -------------------------------------------------------------
+    # RIGHT MAIN CONTENT
+    # -------------------------------------------------------------
+    main_flowables = []
+
+    # 1. Header Name & Title
+    main_flowables.append(Paragraph("ELJALAOUI MOURAD", title_name))
+    main_flowables.append(Spacer(1, 2))
+    main_flowables.append(Paragraph("INGÉNIEUR RÉSEAUX & CYBERSÉCURITÉ | ARCHITECTE SIEM WAZUH", subtitle_role))
+    main_flowables.append(Spacer(1, 6))
+    main_flowables.append(HRFlowable(width="100%", thickness=1.5, color=navy_dark, spaceBefore=0, spaceAfter=6))
+
+    # 2. Profil Professionnel
+    main_flowables.append(Paragraph("PROFIL PROFESSIONNEL", main_heading))
+    summary_box = Paragraph(
+        "Ingénieur spécialisé en réseaux informatiques, systèmes et cybersécurité. Concepteur et intégrateur d'une infrastructure <b>SIEM d'entreprise basée sur Wazuh</b>, centralisant les journaux d'Active Directory, du pare-feu pfSense, de serveurs Linux (DMZ) et d'hôtes Windows pour la détection proactive des menaces, la réponse aux incidents et le durcissement d'infrastructures IT.",
+        body_text
+    )
+    main_flowables.append(summary_box)
+    main_flowables.append(Spacer(1, 6))
+
+    # 3. Expériences Professionnelles
+    main_flowables.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#CBD5E1"), spaceBefore=2, spaceAfter=4))
+    main_flowables.append(Paragraph("PARCOURS PROFESSIONNEL", main_heading))
+
+    experiences = [
         {
             "role": "Opérateur de Production",
             "company": "Maroc Telecom",
             "period": "2022 - Présent",
-            "desc": [
-                "Surveillance et maintien en condition opérationnelle (MCO) des équipements réseaux et services télécoms critiques.",
-                "Analyse continue des incidents de production, diagnostic des anomalies et supervision de l'infrastructure de production.",
+            "bullets": [
+                "Surveillance et maintien en condition opérationnelle (MCO) des équipements réseaux et services télécoms de production.",
+                "Supervision continue des infrastructures critiques, diagnostic des anomalies et gestion des escalades d'incidents.",
             ]
         },
         {
             "role": "Technicien Informatique",
             "company": "2easy",
             "period": "2021 - 2022",
-            "desc": [
-                "Administration des réseaux d'entreprise, maintenance matérielle/logicielle et durcissement de la sécurité des postes de travail.",
+            "bullets": [
+                "Administration des réseaux d'entreprise, maintenance matérielle/logicielle et durcissement des postes de travail.",
                 "Assistance technique utilisateurs et résolution des incidents système et réseau de niveau 1 & 2.",
             ]
         },
@@ -184,62 +264,88 @@ def build_pdf():
             "role": "Technicien Réseaux",
             "company": "CHU Mohammed VI Marrakech",
             "period": "2021",
-            "desc": [
-                "Gestion de l'infrastructure réseau hospitalière, déploiement et configuration des routeurs/switchs Cisco.",
-                "Dépannage réseau sur le terrain, analyse de paquets et maintien de la continuité de service des réseaux de santé.",
+            "bullets": [
+                "Gestion de l'infrastructure réseau hospitalière, configuration des switchs/routeurs Cisco et découpage VLANs.",
+                "Dépannage réseau sur le terrain et analyse de paquets pour garantir la haute disponibilité des services de santé.",
             ]
         }
     ]
 
-    for exp in exps:
-        header_table = Table(
-            [[Paragraph(f"<b>{exp['role']}</b> &nbsp;—&nbsp; <font color='#00B4D8'><b>{exp['company']}</b></font>", job_title_style),
-              Paragraph(exp['period'], job_meta_style)]],
-            colWidths=[400, 140]
+    for exp in experiences:
+        t_exp = Table(
+            [[Paragraph(f"<b>{exp['role']}</b> &nbsp;|&nbsp; <font color='#0077B6'><b>{exp['company']}</b></font>", job_title),
+              Paragraph(exp['period'], job_meta)]],
+            colWidths=[260, 100]
         )
-        header_table.setStyle(TableStyle([
+        t_exp.setStyle(TableStyle([
             ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
             ('LEFTPADDING', (0,0), (-1,-1), 0),
             ('RIGHTPADDING', (0,0), (-1,-1), 0),
             ('BOTTOMPADDING', (0,0), (-1,-1), 1),
             ('TOPPADDING', (0,0), (-1,-1), 2),
         ]))
-        story.append(header_table)
-        for bullet in exp['desc']:
-            story.append(Paragraph(f"• {bullet}", bullet_style))
-        story.append(Spacer(1, 4))
+        main_flowables.append(t_exp)
+        for b in exp['bullets']:
+            main_flowables.append(Paragraph(f"• {b}", bullet_text))
+        main_flowables.append(Spacer(1, 4))
 
-    # 5. Projet Phare (SIEM Wazuh & SOC)
-    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E2E8F0"), spaceBefore=4, spaceAfter=6))
-    story.append(Paragraph("PROJET PHARE : ARCHITECTURE SIEM WAZUH & SOC", section_heading))
-    siem_desc = [
-        "<b>Intégration Multi-Sources:</b> Collecte et centralisation des journaux Active Directory (Authentication, GPO), pfSense Firewall (Traffic, VPN, Snort IDS) et serveurs Linux DMZ.",
-        "<b>Détection & Réponse Automatisée:</b> Création de règles XML de corrélation Wazuh pour la détection d'attaques SSH Brute Force, Kerberoasting et déclenchement de blocages d'IP automatisés sur pfSense."
+    # 4. Projet Phare (SIEM Wazuh & SOC Architecture)
+    main_flowables.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#CBD5E1"), spaceBefore=2, spaceAfter=4))
+    main_flowables.append(Paragraph("PROJET PHARE : ARCHITECTURE SIEM WAZUH & SOC", main_heading))
+    
+    project_bullets = [
+        "<b>Centralisation Multi-Sources:</b> Agrégation en temps réel des logs Active Directory (Kerberos, Auth), pare-feu pfSense (filtrage, VPN, Snort IDS) et serveurs Web Linux DMZ.",
+        "<b>Corrélation & Active Response:</b> Écriture de règles XML sur mesure et script d'action automatisée bloquant instantanément les adresses IP attaquantes sur pfSense (Brute-force SSH, Kerberoasting).",
+        "<b>Tableaux de Bord Kibana:</b> Modélisation d'indicateurs clés de performance (KPI SOC), analyse de tendances de menaces et audit de conformité."
     ]
-    for b in siem_desc:
-        story.append(Paragraph(f"• {b}", bullet_style))
-    story.append(Spacer(1, 6))
+    for pb in project_bullets:
+        main_flowables.append(Paragraph(f"• {pb}", bullet_text))
 
-    # 6. Formation & Éducation
-    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#E2E8F0"), spaceBefore=4, spaceAfter=6))
-    story.append(Paragraph("FORMATION & DIPLÔMES", section_heading))
+    main_flowables.append(Spacer(1, 6))
+
+    # 5. Formation & Diplômes
+    main_flowables.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#CBD5E1"), spaceBefore=2, spaceAfter=4))
+    main_flowables.append(Paragraph("FORMATION & DIPLÔMES", main_heading))
 
     edus = [
-        [Paragraph("<b>Diplôme d'Ingénieur en Informatique</b> (Réseaux & Cybersécurité)", job_title_style), Paragraph("2026", job_meta_style)],
-        [Paragraph("<b>Technicien Spécialisé en Réseaux Informatiques</b>", job_title_style), Paragraph("2021", job_meta_style)]
+        [Paragraph("<b>Diplôme d'Ingénieur en Informatique</b> (Réseaux & Cybersécurité)", job_title), Paragraph("2026", job_meta)],
+        [Paragraph("<b>Technicien Spécialisé en Réseaux Informatiques</b>", job_title), Paragraph("2021", job_meta)]
     ]
-    t_edu = Table(edus, colWidths=[440, 100])
+    t_edu = Table(edus, colWidths=[280, 80])
     t_edu.setStyle(TableStyle([
         ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
         ('LEFTPADDING', (0,0), (-1,-1), 0),
         ('RIGHTPADDING', (0,0), (-1,-1), 0),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 2),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 1),
         ('TOPPADDING', (0,0), (-1,-1), 1),
     ]))
-    story.append(t_edu)
+    main_flowables.append(t_edu)
 
-    doc.build(story)
-    print("PDF CV Generated successfully at public/CV_ELJALAOUI_MOURAD.pdf")
+
+    # -------------------------------------------------------------
+    # ASSEMBLE 2-COLUMN TABLE LAYOUT
+    # -------------------------------------------------------------
+    master_table = Table(
+        [[sidebar_flowables, main_flowables]],
+        colWidths=[185, 375]
+    )
+
+    master_table.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('BACKGROUND', (0,0), (0,0), bg_sidebar),
+        ('LEFTPADDING', (0,0), (0,0), 12),
+        ('RIGHTPADDING', (0,0), (0,0), 12),
+        ('TOPPADDING', (0,0), (0,0), 10),
+        ('BOTTOMPADDING', (0,0), (0,0), 10),
+        ('LEFTPADDING', (1,0), (1,0), 14),
+        ('RIGHTPADDING', (1,0), (1,0), 4),
+        ('TOPPADDING', (1,0), (1,0), 4),
+        ('BOTTOMPADDING', (1,0), (1,0), 4),
+        ('LINERIGHT', (0,0), (0,0), 1, colors.HexColor("#E2E8F0")),
+    ]))
+
+    doc.build([master_table])
+    print("Advanced Executive PDF CV with photo created at public/CV_ELJALAOUI_MOURAD.pdf")
 
 if __name__ == "__main__":
-    build_pdf()
+    build_advanced_pdf()
